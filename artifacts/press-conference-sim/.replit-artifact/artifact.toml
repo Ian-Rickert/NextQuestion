@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Press Conference Simulator"
+description = "A comedic press-conference game where players respond to nine increasingly absurd reporter questions and get feedback on relevance, composure, and careful non-admission."
+version = "1.0.0"
+id = "artifacts/press-conference-sim"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21089
+
+[services.development]
+run = "pnpm --filter @workspace/press-conference-sim run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/press-conference-sim", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/press-conference-sim/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21089"
+BASE_PATH = "/"
