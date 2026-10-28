@@ -1,0 +1,1 @@
+- [Answer scoring calibration](press-conference-scoring.md) — recognize plausible explanations, and test invalid gibberish separately from valid short English replies.
