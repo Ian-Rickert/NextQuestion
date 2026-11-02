@@ -5,7 +5,14 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import { ArrowRight, Check, RotateCcw, Shield, MessageSquareText, Radio, AlertCircle } from 'lucide-react';
-import { ROUNDS, scoreAnswer, ScoreBreakdown, type GameQuestion } from './game';
+import {
+  createQuestionRun,
+  ROUNDS,
+  scoreAnswer,
+  type GameQuestion,
+  type GameRound,
+  type ScoreBreakdown,
+} from './game';
 import {
   Route,
   Switch,
@@ -19,20 +26,24 @@ function Home() {
   type Response = { answer: string; breakdown: ScoreBreakdown };
   const [stage, setStage] = useState<'start' | 'playing' | 'feedback' | 'results'>('start');
   const [current, setCurrent] = useState(0);
+  const [runRounds, setRunRounds] = useState<GameRound[]>(ROUNDS);
+  const [hasStartedOnce, setHasStartedOnce] = useState(false);
   const [answer, setAnswer] = useState('');
   const [responses, setResponses] = useState<Response[]>([]);
   const [validation, setValidation] = useState('');
   const roundIndex = Math.floor(current / 3);
-  const question = ROUNDS[roundIndex].questions[current % 3];
+  const question = runRounds[roundIndex].questions[current % 3];
   const response = responses[current]!;
-  const allQuestions = ROUNDS.flatMap((round) => round.questions);
+  const allQuestions = runRounds.flatMap((round) => round.questions);
   const runTotal = Math.round(responses.reduce((sum, item) => sum + item.breakdown.total, 0) / 9);
-  const roundTotals = ROUNDS.map((_, index) => {
+  const roundTotals = runRounds.map((_, index) => {
     const completed = responses.slice(index * 3, index * 3 + 3);
     return completed.length ? Math.round(completed.reduce((sum, item) => sum + item.breakdown.total, 0) / 3) : 0;
   });
 
   function startRun() {
+    setRunRounds(createQuestionRun(hasStartedOnce ? runRounds : undefined));
+    setHasStartedOnce(true);
     setCurrent(0); setResponses([]); setAnswer(''); setValidation(''); setStage('playing');
   }
   function submitAnswer() {
@@ -67,7 +78,7 @@ function Home() {
             <div className="intro-copy">
               <div className="eyebrow"><span className="eyebrow-rule" /> A PUBLIC STATEMENT EXERCISE</div>
               <h1 id="page-title">The room is<br /><em>waiting.</em></h1>
-              <p className="intro-deck">Nine questions. Three rounds. One microphone between you and a very long news cycle.</p>
+              <p className="intro-deck">Nine questions. Three rounds. A different mix of absurdities every time.</p>
               <div className="intro-meta"><span><b>03</b> ROUNDS</span><i /> <span><b>09</b> QUESTIONS</span><i /> <span><b>01</b> ANSWER EACH</span></div>
               <button className="primary-button start-button" onClick={startRun} data-testid="button-start">Take the podium <ArrowRight size={18} /></button>
               <div className="no-prep"><Shield size={15} /> No prep. No second takes. Just you and the press.</div>
@@ -92,7 +103,7 @@ function Home() {
             <div className="game-heading">
               <div className="eyebrow"><span className="eyebrow-rule" /> PRESS CONFERENCE <span className="slash">/</span> ROUND 0{roundIndex + 1}</div>
               <div className="game-heading-row">
-                <div><h1>{ROUNDS[roundIndex].name}<span className="period">.</span></h1><p className="round-subtitle">{ROUNDS[roundIndex].tone}</p></div>
+                <div><h1>{runRounds[roundIndex].name}<span className="period">.</span></h1><p className="round-subtitle">{runRounds[roundIndex].tone}</p></div>
                 <div className="question-count"><b>0{current + 1}</b><span> / 09</span><small>QUESTION</small></div>
               </div>
               <div className="progress-track" aria-label={`Question ${current + 1} of 9`}><div className="progress-fill" style={{ width: `${((current + (stage === 'feedback' ? 1 : 0)) / 9) * 100}%` }} /></div>
@@ -126,7 +137,7 @@ function Home() {
               </div>
               <aside className="sidebar-brief">
                 <div className="sidebar-title">THE RUN OF SHOW <span>09 TOTAL</span></div>
-                {ROUNDS.map((round, r) => (
+                {runRounds.map((round, r) => (
                   <div className={`round-list ${r === roundIndex ? 'active' : ''}`} key={round.id}>
                     <div className="round-list-head"><b>0{r + 1}</b><span>{round.name}</span><small>{r === 0 ? 'STRAIGHT' : r === 1 ? 'ODD' : 'ABSURD'}</small></div>
                     <div className="mini-question-list">{round.questions.map((item, q) => {
@@ -151,7 +162,7 @@ function Home() {
             <div className="results-columns">
               <div className="round-breakdown">
                 <div className="section-head"><span>ROUND BREAKDOWN</span><small>AVERAGE SCORE / 100</small></div>
-                {ROUNDS.map((round, index) => <div className="round-score-row" key={round.id}><div className="round-score-title"><span>0{index + 1}</span><div><b>{round.name}</b><small>{round.tone}</small></div></div><div className="round-score-meter"><i style={{ width: `${roundTotals[index]}%` }} /></div><strong>{roundTotals[index]}</strong></div>)}
+                {runRounds.map((round, index) => <div className="round-score-row" key={round.id}><div className="round-score-title"><span>0{index + 1}</span><div><b>{round.name}</b><small>{round.tone}</small></div></div><div className="round-score-meter"><i style={{ width: `${roundTotals[index]}%` }} /></div><strong>{roundTotals[index]}</strong></div>)}
                 <div className="final-rubric"><AlertCircle size={16} /><p><b>A playful rubric, not a mind reader.</b><br />Relevance carries 60% of each answer. Composure accounts for 15%, avoiding a direct admission 15%, and fair blame 10%. Phrase cues are not a perfect reading of intent.</p></div>
                 <button className="primary-button replay-button" onClick={startRun} data-testid="button-replay"><RotateCcw size={16} /> Take the podium again</button>
               </div>
