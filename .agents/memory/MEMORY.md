@@ -1,1 +1,2 @@
 - [Answer scoring calibration](press-conference-scoring.md) — recognize plausible explanations, and test invalid gibberish separately from valid short English replies.
+- [Question variety](question-variety.md) — keep five distinct choices for each prompt position while preserving the three difficulty tiers.

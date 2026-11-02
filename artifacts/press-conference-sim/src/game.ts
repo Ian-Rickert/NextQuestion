@@ -409,12 +409,12 @@ const QUESTION_VARIANTS: Record<string, GameQuestion[]> = {
       ["i brought lunch to the interview", "i packed a lunch"],
     ),
     questionVariant(
-      "library-book-smell",
-      "A librarian says you smelled a book before checking it out. What were you looking for?",
-      ["book", "library", "librarian"],
-      ["smell", "smelled", "sniff", "sniffed", "checking it out"],
-      ["old paper", "curious", "musty", "scent", "habit", "embarrassed"],
-      ["i smelled the book", "i sniffed it"],
+      "waiter-you-too",
+      "You replied “you too” when a waiter wished you an enjoyable meal. Any comment?",
+      ["waiter", "restaurant", "meal", "food"],
+      ["you too", "replied", "enjoy your meal", "said"],
+      ["distracted", "reflex", "polite", "nervous", "autopilot", "embarrassed"],
+      ["i said you too", "i replied you too"],
     ),
   ],
   "fitness-tracker": [
@@ -511,12 +511,12 @@ const QUESTION_VARIANTS: Record<string, GameQuestion[]> = {
       ["i keep going to the bakery", "i followed the gps"],
     ),
     questionVariant(
-      "two-minute-stretch",
-      "Your fitness app called a two-minute stretch your personal best. Is that accurate?",
-      ["fitness app", "stretch", "workout", "app"],
-      ["two minutes", "personal best", "recorded", "exercise"],
-      ["new", "recovery", "warmup", "encouragement", "injury", "starting out"],
-      ["i stretched for two minutes", "that was my workout"],
+      "library-book-smell",
+      "A librarian says you smelled a book before checking it out. What were you looking for?",
+      ["book", "library", "librarian"],
+      ["smell", "smelled", "sniff", "sniffed", "checking it out"],
+      ["old paper", "curious", "musty", "scent", "habit", "embarrassed"],
+      ["i smelled the book", "i sniffed it"],
     ),
   ],
   "goose-lawsuit": [
@@ -697,8 +697,12 @@ const ENGLISH_FUNCTION_WORDS = new Set(
   `a about above after again against all am an and any are as at away be because been before being below between both but by can cannot could did do does doing done down during each either enough even ever every few for from further get give go had has have he her here hers him his how i if in into is it its just know last let like little long look made make many may me might more most much must my near never no nor not now of off on once one only or other our out over own people place please point quite rather right said same say see she should so some still such take than that the their them then there these they thing think this those through time to today too under until up us use very was we well were what when where which while who why will with would yes yet you your`.split(/\s+/),
 );
 
-export const COMMON_ENGLISH_WORDS = new Set(
+const ENGLISH_CHARACTERS = new Set(
   `able about above accept according account across act action actually add after again against age ago agree air all almost along already also although always am an and animal another answer any anyone anything anyway appear are around as ask at away back bad bag ball be bear beat because become bed been before began begin behind believe best better between big bird bit black blood blue body book both box boy break broken bring brought brother build business busy but buy by call came can cannot car care carry case cat cause change chicken child children choose city class clean clear close cold come common company continue control cook cool could country course court cover create cry cut day dead decide deep defend defense degree desk did difference different do doctor dog done door down draw dream dress drink drive during each early earth easy eat effect effort end enough enjoy enter especially even ever every example explain eye face fact fall family far fast father feel few field find fine finish first five follow food foot for form found four free friend from front full funny game garden gave general get girl give glass go good government great green ground group grow guess guy had half hand happen hard has have he head health hear heart heavy help her here high him his history hit hold home house how however hundred hungry husband i idea if important in improve in individual information inside instead into inventory involve is it its jacket job join just keep key kid kind king kitchen knew know land large last late laugh law lead learn least leave leg legal less let level life light like likely line list listen little live long look lose lost lot love low made make main major make man many map mark market matter may meal mean meaning meet member memory men mention middle might milk mind minute miss money month more morning most mother mountain mouth move much music must my name near need never new news next night no noise none nor north not note number of off offer office often oil old on once one only open or order other our out over own page paper parent part party pass past pay people percent person picture piece place plan plant play point police poor popular position possible power problem process produce product project provide pull put quality question quick quiet quite radio raise reach read ready real really reason receive recognize record red relate relationship remain remember report respect rest result return right road room round rule run sad safe same saw say school science sea season second see seem sell send sentence serious serve set several she shop short should show showed side simple since sing single sister sit situation six size sleep slow small so society soldier some someone something sometimes sound south space speak special spring stand state stay step still stock stop story strange street strong student study subject such sum sun system take talk teacher team tell ten than thank that the their them then there these they thing think third this those though thought thousand three through throw time tired to today together told too took town trade trader traffic train travel tree true try turn two type under understand until up upon us use used useful usual value very voice wait walk wall want war warm was watch water way we wear week well went were what when where which while white who whole why wide wife will win wind window wish with within without woman women word work world would write wrong year yes yet you you’re your yours youth`,
+);
+
+const COMMON_ENGLISH_WORDS = new Set(
+  `a able about accept actually add after again against all almost already also although always am an and animal another answer any are around as ask at away back bad bag ball be because become been before best better between big bird bit black blue body book both box boy break bring brother build business busy but by call came can car care carry case cat cause change chicken child choose city class clean clear close cold come common company continue control cook cool could country course cover create cry cut day dead decide deep defend degree desk did difference different do doctor dog done door down draw dream dress drink drive during each early earth easy eat effect effort end enough enjoy enter especially even ever every example explain eye face fact fall family far fast father feel few field find fine finish first five follow food foot for form found four free friend from front full funny game garden general get girl give glass go good great green ground group grow guess guy had half hand happen hard has have he head health hear heart heavy help her here high him his history hit hold home house how however hundred hungry husband i idea if important improve information inside instead into is it its jacket job join just keep key kid kind king kitchen knew know land large last late laugh law lead learn least leave leg legal less let level life light like line list listen little live long look lose lost lot love low made main major man many map mark market matter may meal mean meaning meet member memory mention middle might milk mind minute miss money month more morning most mother mountain mouth move much music must my name near need never new news next night no noise none nor north not note number of off offer office often oil old on once one only open or order other our out over own page paper parent part party pass past pay people percent person picture piece place plan plant play point police poor popular position possible power problem process produce product project provide pull put quality question quick quiet quite radio raise reach read ready real really reason receive recognize record red relate relationship remain remember report respect rest result return right road room round rule run sad safe same saw say school science sea season second see seem sell send sentence serious serve set several she shop short should show side simple since sing single sister sit situation six size sleep slow small so society soldier some someone something sometimes sound south space speak special spring stand state stay step still stop story strange street strong student study subject such sum sun system take talk teacher team tell ten than thank that the their them then there these they thing think third this those though thought thousand three through throw time tired to today together told too took town trade traffic train travel tree true try turn two type under understand until up upon us use used useful usual value very voice wait walk wall want war warm was watch water way we wear week well went were what when where which while white who whole why wide wife will win wind window wish with within without woman women word work world would write wrong year yes yet you your yours`.split(/\s+/),
 );
 
 const PROJECT_ENGLISH_WORDS = new Set(
@@ -743,7 +747,7 @@ function containsPhrase(text: string, phrase: string): boolean {
   return ` ${text} `.includes(` ${normalizedPhrase} `);
 }
 
-export function isKnownEnglishWord(word: string): boolean {
+function isKnownEnglishWord(word: string): boolean {
   if (
     COMMON_ENGLISH_WORDS.has(word) ||
     PROJECT_ENGLISH_WORDS.has(word) ||
@@ -768,9 +772,18 @@ export function isKnownEnglishWord(word: string): boolean {
   return false;
 }
 
-export function isLikelyEnglish(text: string): boolean {
+function isLikelyEnglish(text: string): boolean {
   const words: string[] = text.match(/[a-z]+(?:'[a-z]+)?/g) ?? [];
   if (words.length === 0) return false;
+  if (
+    words.some((word) =>
+      [...word.replace(/'/g, "")].some(
+        (character) => !ENGLISH_CHARACTERS.has(character),
+      ),
+    )
+  ) {
+    return false;
+  }
 
   const recognized = words.filter(isKnownEnglishWord);
   if (words.length === 1) return recognized.length === 1;
