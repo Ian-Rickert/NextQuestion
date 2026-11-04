@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: press-conference
+    description: Press conference game operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /press-conference/score:
+    post:
+      operationId: evaluatePressConferenceAnswer
+      tags: [press-conference]
+      summary: Evaluate a press conference answer
+      description: Semantically scores an answer against its question and the game's real-world response goals.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PressConferenceAnswerInput"
+      responses:
+        "200":
+          description: Contextual answer evaluation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PressConferenceAnswerScore"
+        "400":
+          description: Invalid request
+        "429":
+          description: Evaluation rate limit exceeded
+        "503":
+          description: Answer evaluator unavailable
 components:
   schemas:
     HealthStatus:
@@ -33,4 +60,72 @@ components:
           type: string
       required:
         - status
+    PressConferenceAnswerInput:
+      type: object
+      additionalProperties: false
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 500
+        answer:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required: [question, answer]
+    PressConferenceAnswerScore:
+      type: object
+      additionalProperties: false
+      properties:
+        validEnglish:
+          type: boolean
+        relevance:
+          type: integer
+          minimum: 0
+          maximum: 60
+        composure:
+          type: integer
+          minimum: 0
+          maximum: 15
+        nonAdmission:
+          type: integer
+          minimum: 0
+          maximum: 15
+        fairBlame:
+          type: integer
+          minimum: 0
+          maximum: 10
+        total:
+          type: integer
+          minimum: 0
+          maximum: 100
+        feedback:
+          type: string
+          maxLength: 300
+        rationales:
+          type: object
+          additionalProperties: false
+          properties:
+            relevance:
+              type: string
+              maxLength: 180
+            composure:
+              type: string
+              maxLength: 180
+            nonAdmission:
+              type: string
+              maxLength: 180
+            fairBlame:
+              type: string
+              maxLength: 180
+          required: [relevance, composure, nonAdmission, fairBlame]
+      required:
+        - validEnglish
+        - relevance
+        - composure
+        - nonAdmission
+        - fairBlame
+        - total
+        - feedback
+        - rationales
 

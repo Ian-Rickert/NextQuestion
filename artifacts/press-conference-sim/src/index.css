@@ -309,6 +309,9 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid hsl(var(--acce
 .no-prep { display:flex; gap:8px; align-items:center; color:#74756f; margin-top:19px; font-size:12px; }
 .no-prep svg { color:var(--accent-green); }
 .briefing-card { background:var(--paper-light); border:1px solid var(--rule); padding:30px 31px 23px; box-shadow:8px 8px 0 rgba(54,45,34,.05); }
+.glass-fold-band { position:relative; height:72px; margin:20px 0 18px; overflow:hidden; background:linear-gradient(125deg,#201b18,#8d3b32 58%,#e5c39b); }
+.glass-fold-band span { position:absolute; left:12px; bottom:10px; display:flex; align-items:center; gap:7px; color:#fff6ea; font:8px var(--app-font-mono); letter-spacing:.12em; }
+.glass-fold-band i { width:5px; height:5px; border-radius:50%; background:#c84c3b; box-shadow:0 0 8px #e77661; }
 .card-kicker { display:flex; justify-content:space-between; color:#77776f; padding-bottom:15px; border-bottom:1px solid var(--rule); font-size:9px; }
 .card-kicker span:last-child { color:var(--accent-red); }
 .briefing-card h2 { margin:21px 0 23px; font:500 32px/1.05 var(--app-font-serif); letter-spacing:-.035em; }
@@ -382,6 +385,8 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid hsl(var(--acce
 .result-score-line small { display:block; margin-top:5px; color:#88867e; font-size:8px; }
 .score-breakdown { display:grid; gap:10px; margin:17px 0; }
 .score-row { display:grid; grid-template-columns:140px 1fr 45px; align-items:center; gap:9px; color:#686b65; font-size:11px; }
+.score-row > span { display:flex; flex-direction:column; gap:3px; }
+.score-row > span small { color:#8c897f; font-size:9px; font-weight:400; line-height:1.35; }
 .score-bar { height:4px; background:#e5dfd3; }
 .score-bar i { display:block; height:100%; background:var(--accent-green); }
 .score-row > b { text-align:right; color:var(--ink); font:500 11px var(--app-font-mono); }
@@ -427,6 +432,7 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid hsl(var(--acce
   .intro-copy { padding:0; }
   .intro-copy h1 { font-size:70px; }
   .briefing-card { padding:24px 21px 20px; }
+  .glass-fold-band { height:64px; margin:17px 0 16px; }
   .intro-bottom { width:100%; margin-top:3px; font-size:7px; gap:12px; }
   .game-layout { padding:35px 0 45px; }
   .conference-grid { grid-template-columns:1fr; gap:17px; }

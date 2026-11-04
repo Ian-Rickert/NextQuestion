@@ -1,5 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  useEvaluatePressConferenceAnswer,
+  type PressConferenceAnswerScore,
+} from '@workspace/api-client-react';
+import { GlassFold } from '@/components/ui/glass-fold';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -8,10 +13,8 @@ import { ArrowRight, Check, RotateCcw, Shield, MessageSquareText, Radio, AlertCi
 import {
   createQuestionRun,
   ROUNDS,
-  scoreAnswer,
   type GameQuestion,
   type GameRound,
-  type ScoreBreakdown,
 } from './game';
 import {
   Route,
@@ -23,7 +26,8 @@ import {
 const queryClient = new QueryClient();
 
 function Home() {
-  type Response = { answer: string; breakdown: ScoreBreakdown };
+  type Response = { answer: string; breakdown: PressConferenceAnswerScore };
+  const scoreAnswerMutation = useEvaluatePressConferenceAnswer();
   const [stage, setStage] = useState<'start' | 'playing' | 'feedback' | 'results'>('start');
   const [current, setCurrent] = useState(0);
   const [runRounds, setRunRounds] = useState<GameRound[]>(ROUNDS);
@@ -46,14 +50,23 @@ function Home() {
     setHasStartedOnce(true);
     setCurrent(0); setResponses([]); setAnswer(''); setValidation(''); setStage('playing');
   }
-  function submitAnswer() {
+  async function submitAnswer() {
     if (!answer.trim()) {
       setValidation('The microphones are live. Please enter an answer before submitting.');
       return;
     }
-    const next = [...responses];
-    next[current] = { answer: answer.trim(), breakdown: scoreAnswer(question, answer.trim()) };
-    setResponses(next); setValidation(''); setStage('feedback');
+    setValidation('');
+    try {
+      const breakdown = await scoreAnswerMutation.mutateAsync({
+        data: { question: question.prompt, answer: answer.trim() },
+      });
+      const next = [...responses];
+      next[current] = { answer: answer.trim(), breakdown };
+      setResponses(next);
+      setStage('feedback');
+    } catch {
+      setValidation('The scoring desk could not evaluate that answer. Please try again.');
+    }
   }
   function nextQuestion() {
     if (current === 8) { setStage('results'); return; }
@@ -85,6 +98,17 @@ function Home() {
             </div>
             <aside className="briefing-card">
               <div className="card-kicker"><span>BEFORE THE CAMERAS</span><span>READ IN</span></div>
+              <div className="glass-fold-band" aria-hidden="true">
+                <GlassFold
+                  color1="#8d3b32"
+                  color2="#201b18"
+                  color3="#e5c39b"
+                  speed={0.22}
+                  scale={0.85}
+                  noise={0.035}
+                />
+                <span>ON AIR <i /> LIVE FEED</span>
+              </div>
               <h2>Four rules for<br />getting through it.</h2>
               <ol className="rules-list">
                 <li><span className="rule-number">01</span><div><b>Answer the question asked.</b><small>Stay focused on the exact detail in front of you.</small></div></li>
@@ -92,7 +116,7 @@ function Home() {
                 <li><span className="rule-number">03</span><div><b>Don't confess.</b><small>Avoid directly admitting to the accusation.</small></div></li>
                 <li><span className="rule-number">04</span><div><b>Don't point fingers.</b><small>Resist the urge to dump blame on someone else.</small></div></li>
               </ol>
-              <div className="rubric-note"><AlertCircle size={15} /><span>Scored by a playful rubric—not a perfect reading of intent.</span></div>
+              <div className="rubric-note"><AlertCircle size={15} /><span>A contextual evaluator reads what you mean—not just which words you use.</span></div>
             </aside>
             <div className="intro-bottom"><span>YOUR STATEMENT WILL BE ON THE RECORD</span><span>PLEASE KEEP IT BRIEF</span></div>
           </section>
@@ -117,18 +141,18 @@ function Home() {
                     <label htmlFor="statement">YOUR STATEMENT <span>({answer.length}/500)</span></label>
                     <textarea id="statement" data-testid="input-answer" maxLength={500} rows={5} value={answer} onChange={(event) => { setAnswer(event.target.value); if (validation) setValidation(''); }} placeholder="Take a breath. The room is listening…" autoFocus />
                     {validation && <p className="validation-message" role="alert"><AlertCircle size={15} />{validation}</p>}
-                    <div className="submit-row"><span>One answer. Make it count.</span><button className="primary-button" type="submit" data-testid="button-submit-answer">Deliver statement <ArrowRight size={17} /></button></div>
+                    <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><button className="primary-button" type="submit" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'} <ArrowRight size={17} /></button></div>
                   </form>
                 ) : (
                   <div className="answer-result" data-testid={`result-answer-${current}`}>
                     <div className="answer-label">YOUR ANSWER</div>
                     <p className="answer-quote">“{response.answer}”</p>
-                    <div className="result-score-line"><div className="result-score"><b>{response.breakdown.total}</b><span>/100</span></div><div><strong>{scoreLabel(response.breakdown.total)}</strong><small>QUESTION SCORE · PLAYFUL RUBRIC</small></div></div>
+                    <div className="result-score-line"><div className="result-score"><b>{response.breakdown.total}</b><span>/100</span></div><div><strong>{scoreLabel(response.breakdown.total)}</strong><small>{response.breakdown.validEnglish ? 'QUESTION SCORE · CONTEXTUAL REVIEW' : 'NO SCORE · UNINTELLIGIBLE ANSWER'}</small></div></div>
                     <div className="score-breakdown">
-                      <ScoreRow label="Question relevance" score={response.breakdown.relevance} max={60} />
-                      <ScoreRow label="Composure" score={response.breakdown.composure} max={15} />
-                      <ScoreRow label="No direct admission" score={response.breakdown.nonAdmission} max={15} />
-                      <ScoreRow label="Fair blame" score={response.breakdown.fairBlame} max={10} />
+                      <ScoreRow label="Question relevance" score={response.breakdown.relevance} max={60} rationale={response.breakdown.rationales.relevance} />
+                      <ScoreRow label="Composure" score={response.breakdown.composure} max={15} rationale={response.breakdown.rationales.composure} />
+                      <ScoreRow label="Careful non-admission" score={response.breakdown.nonAdmission} max={15} rationale={response.breakdown.rationales.nonAdmission} />
+                      <ScoreRow label="Fair blame" score={response.breakdown.fairBlame} max={10} rationale={response.breakdown.rationales.fairBlame} />
                     </div>
                     <p className="result-feedback">{response.breakdown.feedback}</p>
                     <button className="primary-button continue-button" onClick={nextQuestion} data-testid="button-continue">{current === 8 ? 'See final statement' : 'Next question'} <ArrowRight size={17} /></button>
@@ -163,7 +187,7 @@ function Home() {
               <div className="round-breakdown">
                 <div className="section-head"><span>ROUND BREAKDOWN</span><small>AVERAGE SCORE / 100</small></div>
                 {runRounds.map((round, index) => <div className="round-score-row" key={round.id}><div className="round-score-title"><span>0{index + 1}</span><div><b>{round.name}</b><small>{round.tone}</small></div></div><div className="round-score-meter"><i style={{ width: `${roundTotals[index]}%` }} /></div><strong>{roundTotals[index]}</strong></div>)}
-                <div className="final-rubric"><AlertCircle size={16} /><p><b>A playful rubric, not a mind reader.</b><br />Relevance carries 60% of each answer. Composure accounts for 15%, avoiding a direct admission 15%, and fair blame 10%. Phrase cues are not a perfect reading of intent.</p></div>
+                <div className="final-rubric"><AlertCircle size={16} /><p><b>Meaning matters more than matching phrases.</b><br />Each answer is judged against its question. Relevance is worth 60 points, composure 15, careful non-admission 15, and fair blame 10. Unintelligible answers receive zero across the board.</p></div>
                 <button className="primary-button replay-button" onClick={startRun} data-testid="button-replay"><RotateCcw size={16} /> Take the podium again</button>
               </div>
               <div className="transcript">
@@ -179,8 +203,8 @@ function Home() {
   );
 }
 
-function ScoreRow({ label, score, max }: { label: string; score: number; max: number }) {
-  return <div className="score-row"><span>{label}</span><div className="score-bar"><i style={{ width: `${(score / max) * 100}%` }} /></div><b>{score}<small>/{max}</small></b></div>;
+function ScoreRow({ label, score, max, rationale }: { label: string; score: number; max: number; rationale: string }) {
+  return <div className="score-row"><span>{label}<small>{rationale}</small></span><div className="score-bar"><i style={{ width: `${(score / max) * 100}%` }} /></div><b>{score}<small>/{max}</small></b></div>;
 }
 
 function Router() {
