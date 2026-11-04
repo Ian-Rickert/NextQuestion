@@ -268,8 +268,8 @@
 
 html { min-width: 320px; background: #eee9dd; }
 body { margin: 0; font-family: var(--app-font-sans); }
-button, textarea { font: inherit; }
-button:focus-visible, textarea:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
+button, textarea, input { font: inherit; }
+button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
 .briefing-shell {
   --paper: #f2eee4; --paper-light: #f8f5ed; --ink: #252a30; --muted-ink: #73766f;
   --rule: #d7d0c1; --accent-red: #a93d31; --accent-green: #4d6c5d;
@@ -350,8 +350,8 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid hsl(var(--acce
 .answer-form { border-top:1px solid var(--rule); padding-top:20px; }
 .answer-form label { display:flex; justify-content:space-between; color:#5e625f; font-size:9px; }
 .answer-form label span { color:#98948b; }
-.answer-form textarea { display:block; width:100%; resize:vertical; margin-top:11px; padding:14px; border:1px solid #d4ccbe; border-radius:0; background:#fcfaf5; color:var(--ink); font-size:14px; line-height:1.6; min-height:130px; }
-.answer-form textarea::placeholder { color:#aaa69c; }
+.answer-form input[type="text"] { display:block; width:100%; box-sizing:border-box; margin-top:11px; padding:14px; border:1px solid #d4ccbe; border-radius:0; background:#fcfaf5; color:var(--ink); font-size:14px; line-height:1.6; }
+.answer-form input[type="text"]::placeholder { color:#aaa69c; }
 .submit-row { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-top:16px; }
 .submit-row > span { color:#88867e; font-size:11px; }
 .submit-row .primary-button { min-width:172px; }

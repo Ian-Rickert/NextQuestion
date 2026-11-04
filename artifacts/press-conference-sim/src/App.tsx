@@ -145,9 +145,9 @@ function Home() {
                 <div className="reporter-line"><span className="reporter-mark"><MessageSquareText size={17} /></span><div><b>REPORTER QUESTION</b><small>ON THE RECORD · {roundIndex === 0 ? 'CITY DESK' : roundIndex === 1 ? 'CULTURE DESK' : 'WORLD DESK'}</small></div><span className="mic-status"><span /> LIVE</span></div>
                 <blockquote>{question.prompt}</blockquote>
                 {stage === 'playing' ? (
-                  <form className="answer-form" onSubmit={(event) => { event.preventDefault(); submitAnswer(); }}>
+                  <form className="answer-form" onSubmit={(event) => { event.preventDefault(); if (scoreAnswerMutation.isPending) return; submitAnswer(); }}>
                     <label htmlFor="statement">YOUR STATEMENT <span>({answer.length}/500)</span></label>
-                    <textarea id="statement" data-testid="input-answer" maxLength={500} rows={5} value={answer} onChange={(event) => { setAnswer(event.target.value); if (validation) setValidation(''); }} placeholder="Take a breath. The room is listening…" autoFocus />
+                    <input type="text" id="statement" data-testid="input-answer" maxLength={500} value={answer} onChange={(event) => { setAnswer(event.target.value); if (validation) setValidation(''); }} placeholder="Take a breath. The room is listening…" autoFocus />
                     {validation && <p className="validation-message" role="alert"><AlertCircle size={15} />{validation}</p>}
                     <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><LiquidButton className="min-w-[172px] bg-[rgba(141,59,50,0.35)] text-[#fff8ed] font-semibold tracking-wide" type="submit" size="lg" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'} <ArrowRight size={17} /></LiquidButton></div>
                   </form>
