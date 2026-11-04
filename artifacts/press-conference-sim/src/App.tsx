@@ -5,6 +5,7 @@ import {
   type PressConferenceAnswerScore,
 } from '@workspace/api-client-react';
 import { GlassFold } from '@/components/ui/glass-fold';
+import { LiquidButton } from '@/components/ui/liquid-glass-button';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -93,7 +94,14 @@ function Home() {
               <h1 id="page-title">The room is<br /><em>waiting.</em></h1>
               <p className="intro-deck">Nine questions. Three rounds. A different mix of absurdities every time.</p>
               <div className="intro-meta"><span><b>03</b> ROUNDS</span><i /> <span><b>09</b> QUESTIONS</span><i /> <span><b>01</b> ANSWER EACH</span></div>
-              <button className="primary-button start-button" onClick={startRun} data-testid="button-start">Take the podium <ArrowRight size={18} /></button>
+              <LiquidButton
+                className="start-button bg-[rgba(141,59,50,0.35)] text-[#fff8ed] font-semibold tracking-wide"
+                size="xl"
+                onClick={startRun}
+                data-testid="button-start"
+              >
+                Take the podium <ArrowRight size={18} />
+              </LiquidButton>
               <div className="no-prep"><Shield size={15} /> No prep. No second takes. Just you and the press.</div>
             </div>
             <aside className="briefing-card">
@@ -141,7 +149,7 @@ function Home() {
                     <label htmlFor="statement">YOUR STATEMENT <span>({answer.length}/500)</span></label>
                     <textarea id="statement" data-testid="input-answer" maxLength={500} rows={5} value={answer} onChange={(event) => { setAnswer(event.target.value); if (validation) setValidation(''); }} placeholder="Take a breath. The room is listening…" autoFocus />
                     {validation && <p className="validation-message" role="alert"><AlertCircle size={15} />{validation}</p>}
-                    <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><button className="primary-button" type="submit" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'} <ArrowRight size={17} /></button></div>
+                    <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><LiquidButton className="min-w-[172px] bg-[rgba(141,59,50,0.35)] text-[#fff8ed] font-semibold tracking-wide" type="submit" size="lg" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'} <ArrowRight size={17} /></LiquidButton></div>
                   </form>
                 ) : (
                   <div className="answer-result" data-testid={`result-answer-${current}`}>
