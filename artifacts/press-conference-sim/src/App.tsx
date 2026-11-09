@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { ArrowRight, RotateCcw, Shield, Radio, AlertCircle } from 'lucide-react';
+import { ArrowRight, RotateCcw, Shield, Radio, Mic, AlertCircle } from 'lucide-react';
 import {
   createQuestionRun,
   ROUNDS,
@@ -107,7 +107,13 @@ function Home() {
         )}
 
         {(stage === 'playing' || stage === 'feedback') && question && (
-          <section className="game-layout" aria-live="polite">
+          <section className="game-layout interview-stage" aria-live="polite">
+            <div className="interview-lights" aria-hidden="true">
+              <span className="spotlight spotlight-a" />
+              <span className="spotlight spotlight-b" />
+              <span className="spotlight-beam beam-a" />
+              <span className="spotlight-beam beam-b" />
+            </div>
             <div className="game-heading game-heading-minimal">
               <div className="question-count" aria-label={`Question ${current + 1} of 9`}>
                 <b>0{current + 1}</b><span> / 09</span>
@@ -115,6 +121,11 @@ function Home() {
             </div>
             <div className="conference-grid conference-grid-solo">
               <div className="question-panel">
+                <div className="podium-mics" aria-hidden="true">
+                  <span className="podium-mic"><Mic size={16} strokeWidth={2.25} /></span>
+                  <span className="podium-mic podium-mic-alt"><Mic size={14} strokeWidth={2.25} /></span>
+                  <span className="podium-mic"><Mic size={16} strokeWidth={2.25} /></span>
+                </div>
                 <blockquote>{question.prompt}</blockquote>
                 {stage === 'playing' ? (
                   <form className="answer-form" onSubmit={(event) => { event.preventDefault(); if (scoreAnswerMutation.isPending) return; submitAnswer(); }}>
