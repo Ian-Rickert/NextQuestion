@@ -4,13 +4,12 @@ import {
   useEvaluatePressConferenceAnswer,
   type PressConferenceAnswerScore,
 } from '@workspace/api-client-react';
-import { GlassFold } from '@/components/ui/glass-fold';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { ArrowRight, Check, RotateCcw, Shield, MessageSquareText, Radio, AlertCircle } from 'lucide-react';
+import { ArrowRight, RotateCcw, Shield, Radio, AlertCircle } from 'lucide-react';
 import {
   createQuestionRun,
   ROUNDS,
@@ -78,12 +77,12 @@ function Home() {
   }
 
   return (
-    <main className={`briefing-shell ${stage === 'playing' || stage === 'feedback' ? `round-mood-${roundIndex}` : ''}`}>
+    <main className="briefing-shell">
       <header className="masthead">
         <div className="masthead-inner">
-          <div className="brand-lockup"><span className="brand-seal"><Radio size={17} /></span><span>THE DAILY <b>BRIEF</b></span></div>
+          <div className="brand-lockup"><span className="brand-seal"><Radio size={17} /></span><span><b>Next<em>Question</em></b></span></div>
           <div className="masthead-status"><span className="live-dot" /> SIMULATION IN SESSION</div>
-          <div className="edition">SPECIAL EDITION <span>•</span> NO. 009</div>
+          <div className="edition">PRESS ROOM <span>•</span> LIVE</div>
         </div>
       </header>
       <div className="page-frame">
@@ -95,61 +94,34 @@ function Home() {
               <p className="intro-deck">Nine questions. Three rounds. A different mix of absurdities every time.</p>
               <div className="intro-meta"><span><b>03</b> ROUNDS</span><i /> <span><b>09</b> QUESTIONS</span><i /> <span><b>01</b> ANSWER EACH</span></div>
               <LiquidButton
-                className="start-button bg-[rgba(141,59,50,0.35)] text-[#fff8ed] font-semibold tracking-wide"
+                className="start-button bg-white/30 text-[#0d2749] font-semibold tracking-wide [text-shadow:0_1px_0_rgba(255,255,255,0.55)]"
                 size="xl"
                 onClick={startRun}
                 data-testid="button-start"
               >
-                Take the podium <ArrowRight size={18} />
+                Take the podium
               </LiquidButton>
               <div className="no-prep"><Shield size={15} /> No prep. No second takes. Just you and the press.</div>
             </div>
-            <aside className="briefing-card">
-              <div className="card-kicker"><span>BEFORE THE CAMERAS</span><span>READ IN</span></div>
-              <div className="glass-fold-band" aria-hidden="true">
-                <GlassFold
-                  color1="#8d3b32"
-                  color2="#201b18"
-                  color3="#e5c39b"
-                  speed={0.22}
-                  scale={0.85}
-                  noise={0.035}
-                />
-                <span>ON AIR <i /> LIVE FEED</span>
-              </div>
-              <h2>Four rules for<br />getting through it.</h2>
-              <ol className="rules-list">
-                <li><span className="rule-number">01</span><div><b>Answer the question asked.</b><small>Stay focused on the exact detail in front of you.</small></div></li>
-                <li><span className="rule-number">02</span><div><b>Keep your composure.</b><small>Sound calm, as if the stakes are entirely real.</small></div></li>
-                <li><span className="rule-number">03</span><div><b>Don't confess.</b><small>Avoid directly admitting to the accusation.</small></div></li>
-                <li><span className="rule-number">04</span><div><b>Don't point fingers.</b><small>Resist the urge to dump blame on someone else.</small></div></li>
-              </ol>
-              <div className="rubric-note"><AlertCircle size={15} /><span>A contextual evaluator reads what you mean—not just which words you use.</span></div>
-            </aside>
-            <div className="intro-bottom"><span>YOUR STATEMENT WILL BE ON THE RECORD</span><span>PLEASE KEEP IT BRIEF</span></div>
           </section>
         )}
 
         {(stage === 'playing' || stage === 'feedback') && question && (
           <section className="game-layout" aria-live="polite">
-            <div className="game-heading">
-              <div className="eyebrow"><span className="eyebrow-rule" /> PRESS CONFERENCE <span className="slash">/</span> ROUND 0{roundIndex + 1}</div>
-              <div className="game-heading-row">
-                <div><h1>{runRounds[roundIndex].name}<span className="period">.</span></h1><p className="round-subtitle">{runRounds[roundIndex].tone}</p></div>
-                <div className="question-count"><b>0{current + 1}</b><span> / 09</span><small>QUESTION</small></div>
+            <div className="game-heading game-heading-minimal">
+              <div className="question-count" aria-label={`Question ${current + 1} of 9`}>
+                <b>0{current + 1}</b><span> / 09</span>
               </div>
-              <div className="progress-track" aria-label={`Question ${current + 1} of 9`}><div className="progress-fill" style={{ width: `${((current + (stage === 'feedback' ? 1 : 0)) / 9) * 100}%` }} /></div>
             </div>
-            <div className="conference-grid">
+            <div className="conference-grid conference-grid-solo">
               <div className="question-panel">
-                <div className="reporter-line"><span className="reporter-mark"><MessageSquareText size={17} /></span><div><b>REPORTER QUESTION</b><small>ON THE RECORD · {roundIndex === 0 ? 'CITY DESK' : roundIndex === 1 ? 'CULTURE DESK' : 'WORLD DESK'}</small></div><span className="mic-status"><span /> LIVE</span></div>
                 <blockquote>{question.prompt}</blockquote>
                 {stage === 'playing' ? (
                   <form className="answer-form" onSubmit={(event) => { event.preventDefault(); if (scoreAnswerMutation.isPending) return; submitAnswer(); }}>
                     <label htmlFor="statement">YOUR STATEMENT <span>({answer.length}/500)</span></label>
                     <input type="text" id="statement" data-testid="input-answer" maxLength={500} value={answer} onChange={(event) => { setAnswer(event.target.value); if (validation) setValidation(''); }} placeholder="Take a breath. The room is listening…" autoFocus />
                     {validation && <p className="validation-message" role="alert"><AlertCircle size={15} />{validation}</p>}
-                    <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><LiquidButton className="min-w-[172px] bg-[rgba(141,59,50,0.35)] text-[#fff8ed] font-semibold tracking-wide" type="submit" size="lg" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'} <ArrowRight size={17} /></LiquidButton></div>
+                    <div className="submit-row"><span>{scoreAnswerMutation.isPending ? 'The scoring desk is reviewing your statement…' : 'One answer. Make it count.'}</span><LiquidButton className="min-w-[172px] bg-white/40 text-[#0d2749] font-semibold tracking-wide [text-shadow:0_1px_0_rgba(255,255,255,0.55)]" type="submit" size="lg" disabled={scoreAnswerMutation.isPending} data-testid="button-submit-answer">{scoreAnswerMutation.isPending ? 'Reviewing…' : 'Deliver statement'}</LiquidButton></div>
                   </form>
                 ) : (
                   <div className="answer-result" data-testid={`result-answer-${current}`}>
@@ -167,20 +139,6 @@ function Home() {
                   </div>
                 )}
               </div>
-              <aside className="sidebar-brief">
-                <div className="sidebar-title">THE RUN OF SHOW <span>09 TOTAL</span></div>
-                {runRounds.map((round, r) => (
-                  <div className={`round-list ${r === roundIndex ? 'active' : ''}`} key={round.id}>
-                    <div className="round-list-head"><b>0{r + 1}</b><span>{round.name}</span><small>{r === 0 ? 'STRAIGHT' : r === 1 ? 'ODD' : 'ABSURD'}</small></div>
-                    <div className="mini-question-list">{round.questions.map((item, q) => {
-                      const index = r * 3 + q;
-                      const isDone = index < responses.length;
-                      return <div className={`mini-question ${index === current ? 'current' : ''} ${isDone ? 'done' : ''}`} key={item.id}><span>{isDone ? <Check size={12} /> : `0${index + 1}`}</span><p>{item.prompt}</p></div>;
-                    })}</div>
-                  </div>
-                ))}
-                <div className="sidebar-footnote"><Shield size={15} /><span>Every response stays on the record until your final score.</span></div>
-              </aside>
             </div>
           </section>
         )}
@@ -206,7 +164,7 @@ function Home() {
           </section>
         )}
       </div>
-      <footer className="site-footer"><span>THE DAILY BRIEF <b>•</b> PRESS ROOM SIMULATOR</span><span>A LOCAL, PLAYFUL SCORING EXERCISE</span></footer>
+      <footer className="site-footer"><span>NEXTQUESTION <b>•</b> PRESS ROOM SIMULATOR</span><span>A LOCAL, PLAYFUL SCORING EXERCISE</span></footer>
     </main>
   );
 }
