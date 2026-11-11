@@ -10,16 +10,10 @@ globalThis.require = createRequire(import.meta.url);
 
 const artifactDir = path.dirname(fileURLToPath(import.meta.url));
 
-async function buildAll() {
-  const distDir = path.resolve(artifactDir, "dist");
-  await rm(distDir, { recursive: true, force: true });
-
-  await esbuild({
-    entryPoints: [path.resolve(artifactDir, "src/index.ts")],
+const shared = {
     platform: "node",
     bundle: true,
     format: "esm",
-    outdir: distDir,
     outExtension: { ".js": ".mjs" },
     logLevel: "info",
     // Some packages may not be bundleable, so we externalize them, we can add more here as needed.
@@ -117,6 +111,21 @@ globalThis.__filename = __bannerUrl.fileURLToPath(import.meta.url);
 globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
     `,
     },
+};
+
+async function buildAll() {
+  const functionOnly = process.argv.includes("--function");
+  const distDir = functionOnly
+    ? path.resolve(artifactDir, "../../functions/lib")
+    : path.resolve(artifactDir, "dist");
+  await rm(distDir, { recursive: true, force: true });
+
+  await esbuild({
+    ...shared,
+    entryPoints: functionOnly
+      ? { server: path.resolve(artifactDir, "src/app.ts") }
+      : [path.resolve(artifactDir, "src/index.ts")],
+    outdir: distDir,
   });
 }
 

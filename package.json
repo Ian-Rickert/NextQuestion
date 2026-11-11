@@ -5,16 +5,14 @@
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "build:web": "BASE_PATH=/ PORT=5173 pnpm --filter @workspace/press-conference-sim run build",
-    "dev:local": "pnpm run build:web && PORT=8081 pnpm --filter @workspace/api-server run dev",
-    "start:local": "PORT=8081 pnpm --filter @workspace/api-server run start",
+    "build:web": "pnpm --filter @workspace/press-conference-sim run build",
+    "dev:local": "pnpm run build:web && PORT=5172 pnpm --filter @workspace/api-server run dev",
+    "start:local": "PORT=5172 pnpm --filter @workspace/api-server run start",
+    "deploy": "firebase deploy",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
   "private": true,
-  "dependencies": {
-    "@replit/connectors-sdk": "^0.4.3"
-  },
   "devDependencies": {
     "@rollup/rollup-darwin-arm64": "^4.67.4",
     "prettier": "^3.9.10",

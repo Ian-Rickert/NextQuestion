@@ -50,6 +50,9 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Replit
 .cache/
 .local/
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+functions/lib/

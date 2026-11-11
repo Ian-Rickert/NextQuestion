@@ -348,7 +348,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
   font-family:var(--app-font-mono); font-size:10px; letter-spacing:.1em;
 }
 .masthead-status { display:flex; align-items:center; gap:9px; color:var(--on-wall-muted); }
-.live-dot, .mic-status > span { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent-red); box-shadow:0 0 0 3px rgba(226,59,59,.22); }
+.live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent-red); box-shadow:0 0 0 3px rgba(226,59,59,.22); }
 .edition { color:var(--on-wall-muted); }
 .edition span { color:var(--accent-red); padding:0 4px; }
 .page-frame { max-width:1160px; margin:0 auto; padding:0 32px; }
@@ -442,25 +442,6 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
   50% { opacity:1; transform:scale(1.04); }
 }
 .interview-stage > :not(.interview-lights) { position:relative; z-index:1; }
-.podium-mics {
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  gap:18px;
-  margin:0 0 6px;
-  color:var(--accent-red);
-}
-.podium-mic {
-  display:grid;
-  place-items:center;
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:rgba(61,127,212,.12);
-  border:1px solid rgba(30,70,130,.16);
-  box-shadow:0 0 0 4px rgba(226,59,59,.06);
-}
-.podium-mic-alt { transform:translateY(4px); opacity:.85; }
 .game-heading { max-width:100%; }
 .slash { margin:0 5px; color:var(--accent-red); }
 .game-heading-row { display:flex; align-items:end; justify-content:space-between; margin-top:22px; }
@@ -492,9 +473,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .reporter-line b, .reporter-line small { display:block; }
 .reporter-line b { font-size:9px; }
 .reporter-line small { margin-top:4px; color:var(--muted-ink); font-size:8px; }
-.mic-status { display:flex; align-items:center; gap:7px; margin-left:auto; color:var(--accent-red); font-size:8px; }
-.mic-status > span { width:6px; height:6px; }
-.question-panel blockquote { max-width:700px; margin:30px 0 31px; font:500 clamp(27px, 3.5vw, 39px)/1.2 var(--app-font-serif); letter-spacing:-.025em; color: var(--ink); }
+.question-panel blockquote { max-width:700px; margin:8px 0 31px; font:500 clamp(27px, 3.5vw, 39px)/1.2 var(--app-font-serif); letter-spacing:-.025em; color: var(--ink); }
 .answer-form { border-top:1px solid var(--rule); padding-top:20px; }
 .answer-form label { display:flex; justify-content:space-between; color:var(--muted-ink); font-size:9px; }
 .answer-form label span { color:#8a9bb0; }

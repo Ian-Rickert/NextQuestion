@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { ArrowRight, RotateCcw, Shield, Radio, Mic, AlertCircle } from 'lucide-react';
+import { ArrowRight, RotateCcw, Shield, Radio, AlertCircle } from 'lucide-react';
 import {
   createQuestionRun,
   ROUNDS,
@@ -24,6 +24,18 @@ import {
 } from 'wouter';
 
 const queryClient = new QueryClient();
+
+function scoringErrorMessage(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'data' in error) {
+    const data = (error as { data?: unknown }).data;
+    if (typeof data === 'object' && data !== null && 'error' in data) {
+      const message = (data as { error?: unknown }).error;
+      if (typeof message === 'string' && message.trim()) return message.trim();
+    }
+  }
+  if (error instanceof Error && error.message.trim()) return error.message.trim();
+  return 'The scoring desk could not evaluate that answer. Please try again.';
+}
 
 function Home() {
   type Response = { answer: string; breakdown: PressConferenceAnswerScore };
@@ -56,17 +68,20 @@ function Home() {
       return;
     }
     setValidation('');
+    const text = answer.trim();
+    let breakdown: PressConferenceAnswerScore;
     try {
-      const breakdown = await scoreAnswerMutation.mutateAsync({
-        data: { question: question.prompt, answer: answer.trim() },
+      breakdown = await scoreAnswerMutation.mutateAsync({
+        data: { question: question.prompt, answer: text },
       });
-      const next = [...responses];
-      next[current] = { answer: answer.trim(), breakdown };
-      setResponses(next);
-      setStage('feedback');
-    } catch {
-      setValidation('The scoring desk could not evaluate that answer. Please try again.');
+    } catch (error) {
+      setValidation(scoringErrorMessage(error));
+      return;
     }
+    const next = [...responses];
+    next[current] = { answer: text, breakdown };
+    setResponses(next);
+    setStage('feedback');
   }
   function nextQuestion() {
     if (current === 8) { setStage('results'); return; }
@@ -121,11 +136,6 @@ function Home() {
             </div>
             <div className="conference-grid conference-grid-solo">
               <div className="question-panel">
-                <div className="podium-mics" aria-hidden="true">
-                  <span className="podium-mic"><Mic size={16} strokeWidth={2.25} /></span>
-                  <span className="podium-mic podium-mic-alt"><Mic size={14} strokeWidth={2.25} /></span>
-                  <span className="podium-mic"><Mic size={16} strokeWidth={2.25} /></span>
-                </div>
                 <blockquote>{question.prompt}</blockquote>
                 {stage === 'playing' ? (
                   <form className="answer-form" onSubmit={(event) => { event.preventDefault(); if (scoreAnswerMutation.isPending) return; submitAnswer(); }}>
