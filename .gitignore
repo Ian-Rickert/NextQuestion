@@ -56,3 +56,4 @@ Thumbs.db
 firebase-debug.log
 firebase-debug.*.log
 functions/lib/
+functions/.env

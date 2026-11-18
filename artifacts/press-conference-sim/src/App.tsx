@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { ArrowRight, RotateCcw, Shield, Radio, AlertCircle } from 'lucide-react';
+import { ArrowRight, RotateCcw, Radio, AlertCircle } from 'lucide-react';
 import {
   createQuestionRun,
   ROUNDS,
@@ -104,19 +104,15 @@ function Home() {
         {stage === 'start' && (
           <section className="intro-layout" aria-labelledby="page-title">
             <div className="intro-copy">
-              <div className="eyebrow"><span className="eyebrow-rule" /> A PUBLIC STATEMENT EXERCISE</div>
-              <h1 id="page-title">The room is<br /><em>waiting.</em></h1>
-              <p className="intro-deck">Nine questions. Three rounds. A different mix of absurdities every time.</p>
-              <div className="intro-meta"><span><b>03</b> ROUNDS</span><i /> <span><b>09</b> QUESTIONS</span><i /> <span><b>01</b> ANSWER EACH</span></div>
+              <p className="intro-deck" id="page-title">Nine reporters, three rounds, and the questions get more absurd as you go. Each answer is scored on whether you address the question, stay composed, avoid a clear admission, and keep the blame where it belongs.</p>
               <LiquidButton
-                className="start-button bg-white/30 text-[#0d2749] font-semibold tracking-wide [text-shadow:0_1px_0_rgba(255,255,255,0.55)]"
+                className="start-button bg-white/45 text-[#13233a] font-semibold tracking-wide"
                 size="xl"
                 onClick={startRun}
                 data-testid="button-start"
               >
                 Take the podium
               </LiquidButton>
-              <div className="no-prep"><Shield size={15} /> No prep. No second takes. Just you and the press.</div>
             </div>
           </section>
         )}

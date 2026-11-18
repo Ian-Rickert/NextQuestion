@@ -10,7 +10,11 @@
   ],
   "hosting": {
     "public": "artifacts/press-conference-sim/dist/public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "predeploy": ["pnpm run build:web"],
     "rewrites": [
       {
